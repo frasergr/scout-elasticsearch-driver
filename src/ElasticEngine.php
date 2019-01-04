@@ -75,7 +75,13 @@ class ElasticEngine extends Engine
      */
     public function delete($models)
     {
-        $this->indexer->delete($models);
+        $this->indexer->delete($models->filter(function ($model) {
+            return ElasticClient::exists([
+                'id' => $model->id,
+                'index' => $model->searchableAs(),
+                'type' => $model->searchableAs()
+            ]);
+        }));
     }
 
     /**
